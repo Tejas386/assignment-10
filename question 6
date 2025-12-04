@@ -1,0 +1,63 @@
+#include <iostream>
+#include <unordered_set>
+using namespace std;
+
+struct TreeNode {
+    int val;
+    TreeNode* left;
+    TreeNode* right;
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+};
+
+bool hasDuplicateUtil(TreeNode* root, unordered_set<int>& seen, bool& found) {
+    if (root == nullptr || found) return false;
+    
+    if (seen.find(root->val) != seen.end()) {
+        found = true;
+        return true;
+    }
+    
+    seen.insert(root->val);
+    
+    bool leftHasDuplicate = hasDuplicateUtil(root->left, seen, found);
+    bool rightHasDuplicate = hasDuplicateUtil(root->right, seen, found);
+    
+    return leftHasDuplicate || rightHasDuplicate;
+}
+
+bool hasDuplicate(TreeNode* root) {
+    unordered_set<int> seen;
+    bool found = false;
+    hasDuplicateUtil(root, seen, found);
+    return found;
+}
+
+int main() {
+    TreeNode* root1 = new TreeNode(1);
+    root1->left = new TreeNode(2);
+    root1->right = new TreeNode(3);
+    root1->left->left = new TreeNode(4);
+    root1->left->right = new TreeNode(2);
+    
+    cout << "Tree 1: ";
+    if (hasDuplicate(root1)) {
+        cout << "Duplicates Found" << endl;
+    } else {
+        cout << "No Duplicates" << endl;
+    }
+    
+    TreeNode* root2 = new TreeNode(5);
+    root2->left = new TreeNode(3);
+    root2->right = new TreeNode(8);
+    root2->left->left = new TreeNode(1);
+    root2->left->right = new TreeNode(4);
+    
+    cout << "Tree 2: ";
+    if (hasDuplicate(root2)) {
+        cout << "Duplicates Found" << endl;
+    } else {
+        cout << "No Duplicates" << endl;
+    }
+    
+    return 0;
+}
